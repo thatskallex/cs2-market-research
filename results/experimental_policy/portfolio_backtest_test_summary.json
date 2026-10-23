@@ -1,0 +1,12 @@
+{
+  "initial_capital_rub": 50000.0,
+  "final_equity_rub": 50057.887998962404,
+  "roi_pct": 0.1157759979248076,
+  "sharpe": 0.42594247776092675,
+  "trade_count": 55,
+  "buy_count": 29,
+  "sell_count": 26,
+  "avg_open_positions": 6.145695364238411,
+  "max_open_positions": 15,
+  "min_holding_days": 7
+}

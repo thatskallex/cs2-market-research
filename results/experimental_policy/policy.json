@@ -1,0 +1,9 @@
+{
+    "regime_prob_threshold": 0.65,
+    "entry_alpha_threshold": 0.20,
+    "exit_alpha_threshold": 0.00,
+    "top_k": 2,
+    "max_weight_per_item": 0.05,
+    "max_holding_days": 60,
+    "max_daily_turnover_fraction": 0.02
+}

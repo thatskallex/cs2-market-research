@@ -1,0 +1,26 @@
+{
+  "target_col": "tradable_market_future_gross_return_30d",
+  "threshold_source": "config",
+  "effective_threshold": 0.0,
+  "train": {
+    "n_rows": 487,
+    "accuracy": 1.0,
+    "class_count": 2,
+    "positive_rate": 0.5030800821355236,
+    "roc_auc": 1.0
+  },
+  "val": {
+    "n_rows": 184,
+    "accuracy": 0.5652173913043478,
+    "class_count": 2,
+    "positive_rate": 0.5978260869565217,
+    "roc_auc": 0.8427518427518429
+  },
+  "test": {
+    "n_rows": 151,
+    "accuracy": 0.6225165562913907,
+    "class_count": 2,
+    "positive_rate": 0.33112582781456956,
+    "roc_auc": 0.6481188118811881
+  }
+}

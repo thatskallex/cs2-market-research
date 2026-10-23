@@ -1,0 +1,106 @@
+project:
+  root_dir: .
+  random_seed: 42
+
+paths:
+  raw_daily_market: data/raw/daily_market.parquet
+  raw_item_master: data/raw/item_master.parquet
+  market_panel_master: data/processed/market_panel_master.parquet
+  reports_dir: data/processed/reports
+  feature_store: data/processed/feature_store.parquet
+  market_series: data/processed/market_series.parquet
+  universe_daily: data/processed/universe_daily.parquet
+  models_dir: models
+  signals_dir: signals
+  backtests_dir: backtests
+  live_dir: live
+
+source:
+  db:
+    sqlite_path: "data/external/steamwebapi_history.db"
+    query: |
+      SELECT market_hash_name, resolved_market_hash_name, createdat, price, sold
+      FROM history_rows
+      ORDER BY resolved_market_hash_name, createdat;
+  db_column_map:
+    timestamp: createdat
+    item_id: null
+    market_hash_name: market_hash_name
+    resolved_market_hash_name: resolved_market_hash_name
+    price_rub: price
+    units_sold: sold
+  metadata:
+    file_path: "data/external/metadata.xlsx"
+    sheet_name: 0
+    column_map:
+      item_id: id
+      market_hash_name: market_hash_name
+      market_hash_name_new: market_hash_name_new
+      quality: quality
+      stattrak: StatTrak
+      souvenir: Souvernir
+      type: type
+      rarity: rarity
+      metatype: metatype
+  booleans:
+    true_values: [true, "true", "TRUE", "True", 1, "1", "yes", "Yes", "YES", "y", "Y"]
+    false_values: [false, "false", "FALSE", "False", 0, "0", "no", "No", "NO", "n", "N"]
+
+research:
+  sell_cost_rate: 0.10
+  execute_next_day: true
+
+  alpha_horizons_days: [30, 45]
+  primary_alpha_horizon_days: 30
+  regime_horizon_days: 30
+
+  primary_target: future_excess_gross_return_30d
+  regime_target_col: tradable_market_future_gross_return_30d
+  regime_positive_threshold: 0.0
+
+  initial_capital_rub: 50000
+  max_daily_turnover_fraction: 0.02
+
+  # alpha_pred is now per-day robust z-score in policy.py, so thresholds are in score units
+  top_k_grid: [2, 3]
+  regime_prob_grid: [0.55, 0.60, 0.65]
+  entry_alpha_grid: [0.10, 0.20, 0.30]
+  exit_alpha_grid: [-0.20, -0.10, 0.00]
+  max_weight_grid: [0.05, 0.08, 0.10]
+  max_holding_days_grid: [14, 21, 30]
+
+universe:
+  recent_window_days: 30
+  min_recent_obs: 25
+  min_price_rub: 20.0
+  min_units_sold_30d_median: 20
+  min_turnover_rub_30d_median: 1500.0
+  min_vol_30d: 0.010
+  max_vol_30d: 0.35
+  exclude_metatypes: ['case']
+  exclude_types: ['capsule', 'sticker']
+  exclude_name_keywords: ['sticker capsule', 'graffiti']
+
+splits:
+  train_start: 2023-10-01
+  train_end: 2025-02-28
+  val_start: 2025-03-01
+  val_end: 2025-08-31
+  test_start: 2025-09-01
+  test_end: 2026-02-28
+
+modeling:
+  regime_model:
+    n_estimators: 300
+    max_depth: 5
+    min_samples_leaf: 20
+    learning_rate: 0.05
+    l2_regularization: 0.0
+    max_bins: 255
+  alpha_model:
+    n_estimators: 300
+    max_depth: 4
+    min_samples_leaf: 80
+    learning_rate: 0.03
+    l2_regularization: 2.0
+    max_bins: 255
